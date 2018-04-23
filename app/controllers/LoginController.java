@@ -43,7 +43,7 @@ public class LoginController extends Controller {
             session().clear();
             session("email", loginSubmitform.get().getEmail());
         }
-        return redirect(controllers.routes.HomeController.index(0));
+        return redirect(controllers.routes.HomeController.index());
     }
 
         private User getUserFromSession() {
@@ -74,7 +74,7 @@ public class LoginController extends Controller {
         public Result cancelDeleteAccount(){
     
                 flash("success", "Account deletion cancelled");
-                return redirect(routes.HomeController.index(0));
+                return redirect(routes.HomeController.index());
         }
     
         @Security.Authenticated(Secured.class)

@@ -21,7 +21,6 @@ import views.html.*;
  */
 public class HomeController extends Controller {
 
-
     private FormFactory formFactory;
     private Environment env;
 
@@ -37,112 +36,99 @@ public class HomeController extends Controller {
 		return u;
 	}
 
+    public Result index() {
+        return ok(index.render(getCurrentUser()));
+    }
 
-    public Result index(Long cat) {
+    public Result support() {
+        return ok(support.render(getCurrentUser()));
+    }
 
-       
-     List<Game> gameList = Game.findAll();
+    public Result reviews() {
+        return ok(reviews.render(getCurrentUser()));
+    }
 
-     List <Category> categoryList = Category.findAll();
-     if (cat == 0) {
-         gameList = Game.findAll();
+    public Result videos() {
+        return ok(videos.render(getCurrentUser()));
+    }
 
-     }  else {
-         categoryList = Category.findAll();
-     }
+    public Result news() {
+        return ok(news.render(getCurrentUser()));
+    }
 
-    return ok(index.render(gameList, categoryList, getCurrentUser()));
+
+    public Result games(Long cat) {
+
+        List<Game> gameList = new ArrayList<Game>();
+
+        List <Category> categoryList = Category.find.query().where().orderBy("name asc").findList();
+        if (cat == 0) {
+            gameList = Game.find.all();
+        }  
+        else {
+            gameList = Category.find.ref(cat).getGames();
+        }
+
+        return ok(games.render(gameList, categoryList, getCurrentUser()));
 
     }
 
 
+    public Result addGame(){
 
-        public Result addGame(){
+        Form<Game> gameForm = formFactory.form(Game.class);
+        return ok(addGame.render(gameForm,  getCurrentUser()));
+    }
 
-            Form<Game> gameForm = formFactory.form(Game.class);
-            return ok(addGame.render(gameForm,  getCurrentUser()));
 
-   
+    public Result addGameSubmit(){
+        Form<Game> newGameForm = formFactory.form(Game.class).bindFromRequest();
+        Game newGame = new Game();
+
+        if (newGameForm.hasErrors()){    
+            return badRequest (addGame.render(newGameForm, getCurrentUser()));
         }
-
-
-        public Result addGameSubmit(){
-            Form<Game> newGameForm = formFactory.form(Game.class).bindFromRequest();
-
-
-            if (newGameForm.hasErrors()){
-                
-            return badRequest (addGame.render(newGameForm,  getCurrentUser()));
-            
-        }else {
-                Game newGame = newGameForm.get();
-
-                if (newGame.id == null ){
-                     
-                    newGame.save();
-                
-                
-                } else if (newGame.id != null){
-                    newGame.update();
-                }
-               
-               
-                flash("Success", "game" +newGame.name + "added");
-
-                return redirect (controllers.routes.HomeController.index(0));
+        else 
+        {
+            newGame = newGameForm.get();
+            if (newGame.id == null ){ 
+                newGame.save();
+            }
+            else{
+                newGame.update();
             }
         }
-               
 
-                
-            
-        
-        
-        @Security.Authenticated(Secured.class)
-        @With(AuthAdmin.class)
-        @Transactional
-        public Result deleteGame(Long id) {
-            Game.find.ref(id).delete();
+        flash("Success", "game" + newGame.name + "added");
+        return redirect (controllers.routes.HomeController.games(0));
+    }
 
-            flash("success", "game has been deleted");
+    @Security.Authenticated(Secured.class)
+    @With(AuthAdmin.class)
+    @Transactional
+    public Result deleteGame(Long id) {
+        Game.find.ref(id).delete();
+        flash("success", "game has been deleted");
+        return redirect(routes.HomeController.games(0));
+    }
 
-            return redirect(routes.HomeController.index(0));
+
+    @Security.Authenticated(Secured.class)
+    @Transactional
+    public Result updateGame(Long id) {
+
+        Game g = new Game();
+
+        try{
+            g = Game.find.byId(id);
+        } catch (Exception ex) {
+            return badRequest("error");
         }
 
+        Form<Game>  gameForm = formFactory.form(Game.class).fill(g);
 
-        @Security.Authenticated(Secured.class)
-@Transactional
-public Result updateGame(Long id){
-
-    Game g;
-    Form<Game> gameForm;
-
-    try{
-        g = Game.find.byId(id);
-
-        gameForm = formFactory.form(Game.class).fill(g);
-    
-    
-    } catch (Exception ex) {
-        return badRequest("error");
-
-    }
-    return ok(addGame.render(gameForm, getCurrentUser()));
+        return ok(addGame.render(gameForm, getCurrentUser()));
  
-}
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 }

@@ -50,3 +50,10 @@ run
 clean
 compile
 run
+compile
+h2-browser
+run
+compile
+run
+clean
+exit

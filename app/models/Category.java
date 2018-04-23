@@ -36,7 +36,7 @@ public class Category extends Model {
         return this.id;
     }
 
-    public void setIed(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -48,6 +48,13 @@ public class Category extends Model {
         this.name = name;
     }
 
+    public List<Game> getGames() {
+        return this.games;
+    }
+
+    public void setGames(List<Game> games) {
+        this.games = games;
+    }
     
     
     

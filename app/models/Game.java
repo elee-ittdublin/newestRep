@@ -72,6 +72,14 @@ public void setDescription(String description) {
     this.description = description;
 }
 
+public Category getCategory() {
+    return this.category;
+}
+
+public void setCategory(Category cat) {
+    this.category = cat;
+}
+
 
 public static Finder<Long,Game> find = new Finder<Long,Game>(Game.class);
 
